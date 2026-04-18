@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>منصة تسليم الأبحاث</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--primary:#1a3c5e;--primary-light:#2563a8;--accent:#e8a020;--accent-light:#f5c55a;
+--danger:#c0392b;--success:#1a7a4a;--warn:#b7600a;
+--bg:#f4f6fa;--surface:#fff;--surface2:#f0f4fb;--border:#d0d8e8;
+--text:#1a2236;--text2:#4a5672;--text3:#8a96b0;
+--radius:10px;--shadow:0 2px 12px rgba(26,60,94,0.10)
+}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;min-height:100vh}
+.hidden{display:none!important}
+.page{padding:0;min-height:100vh}
+#loginPage{background:linear-gradient(135deg,#1a3c5e 0%,#2563a8 60%,#1a3c5e 100%);display:flex;align-items:center;justify-content:center;min-height:100vh}
+.login-card{background:var(--surface);border-radius:18px;padding:40px 36px;width:380px;box-shadow:0 8px 40px rgba(0,0,0,0.18)}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-logo .icon-big{font-size:48px;display:block;margin-bottom:8px}
+.login-logo h1{font-size:22px;font-weight:700;color:var(--primary);margin-bottom:4px}
+.login-logo p{font-size:13px;color:var(--text2)}
+.role-tabs{display:flex;gap:8px;margin-bottom:24px;background:var(--bg);border-radius:8px;padding:4px}
+.role-tab{flex:1;padding:8px;text-align:center;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);transition:.2s}
+.role-tab.active{background:var(--primary);color:#fff}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:6px}
+.form-group input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Cairo',sans-serif;font-size:14px;color:var(--text);background:var(--surface);direction:ltr;transition:.2s}
+.form-group input:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 3px rgba(37,99,168,0.12)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:8px;font-family:'Cairo',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:.18s}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-light)}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:hover{background:var(--accent-light);color:var(--text)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-success{background:var(--success);color:#fff}
+.btn-ghost{background:transparent;color:var(--text2);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--bg)}
+.btn-sm{padding:6px 14px;font-size:12px}
+.btn-block{width:100%;justify-content:center}
+.login-error{color:var(--danger);font-size:12px;margin-top:8px;text-align:center}
+.forgot-link{font-size:12px;color:var(--primary-light);cursor:pointer;text-align:center;margin-top:12px;text-decoration:underline}
+#appPage{display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--primary);color:#fff;padding:0 20px;height:56px;display:flex;align-items:center;gap:12px}
+.topbar-logo{font-size:18px;font-weight:700;flex:1}
+.topbar-user{font-size:13px;color:rgba(255,255,255,0.8)}
+.topbar-btns{display:flex;gap:8px}
+.topbar .btn{padding:6px 14px;font-size:12px}
+.topbar .btn-ghost{color:#fff;border-color:rgba(255,255,255,0.35)}
+.topbar .btn-ghost:hover{background:rgba(255,255,255,0.12)}
+.app-body{display:flex;flex:1}
+.sidebar{width:200px;background:var(--surface);border-left:1px solid var(--border);padding:16px 0;flex-shrink:0}
+.nav-item{display:flex;align-items:center;gap:8px;padding:11px 20px;font-size:13px;font-weight:500;cursor:pointer;color:var(--text2);transition:.15s;border-right:3px solid transparent}
+.nav-item:hover{background:var(--surface2);color:var(--primary)}
+.nav-item.active{color:var(--primary);background:var(--surface2);border-right-color:var(--primary)}
+.nav-icon{font-size:16px;width:20px;text-align:center}
+.main-content{flex:1;padding:24px;overflow-y:auto}
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.card-title{font-size:16px;font-weight:700;color:var(--primary);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--surface2);border-radius:8px;padding:14px 16px;text-align:center}
+.stat-num{font-size:26px;font-weight:700;color:var(--primary)}
+.stat-lbl{font-size:11px;color:var(--text2);margin-top:2px}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{background:var(--surface2);color:var(--text2);font-weight:600;padding:10px 12px;text-align:right;border-bottom:1px solid var(--border)}
+.tbl td{padding:10px 12px;border-bottom:0.5px solid var(--border);color:var(--text);vertical-align:middle}
+.tbl tr:hover td{background:var(--surface2)}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-success{background:#d4f0e1;color:#1a7a4a}
+.badge-warn{background:#fef0d8;color:#b7600a}
+.badge-danger{background:#fde8e6;color:#c0392b}
+.badge-info{background:#daeeff;color:#1a5fa8}
+.badge-gray{background:#eaecf2;color:#5a6480}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Cairo',sans-serif;font-size:13px;resize:vertical;min-height:80px}
+.form-group select{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Cairo',sans-serif;font-size:14px;background:var(--surface);color:var(--text)}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:100}
+.modal{background:var(--surface);border-radius:14px;padding:28px;width:500px;max-width:95vw;max-height:85vh;overflow-y:auto;box-shadow:0 16px 60px rgba(0,0,0,0.22)}
+.modal-title{font-size:17px;font-weight:700;color:var(--primary);margin-bottom:20px}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;border-top:1px solid var(--border);padding-top:16px}
+.upload-area{border:2px dashed var(--border);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:.2s;background:var(--surface2)}
+.upload-area:hover{border-color:var(--primary-light);background:#e8f0ff}
+.file-preview{background:var(--surface2);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:13px;display:flex;align-items:center;justify-content:space-between}
+.toast-wrap{position:fixed;bottom:20px;left:20px;z-index:999;display:flex;flex-direction:column;gap:8px}
+.toast{padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;color:#fff;animation:slideUp .25s ease;min-width:220px}
+.toast-success{background:var(--success)}.toast-error{background:var(--danger)}.toast-info{background:var(--primary-light)}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.student-chip{display:inline-flex;align-items:center;gap:4px;background:#e8effe;border-radius:6px;padding:3px 8px;font-size:12px;color:var(--primary);margin:2px}
+.notif-item{padding:14px 16px;border-bottom:0.5px solid var(--border);display:flex;gap:12px;cursor:pointer;transition:.15s}
+.notif-item:hover{background:var(--surface2)}
+.notif-item.unread{background:#edf3ff}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:5px;flex-shrink:0}
+.notif-dot.read{background:transparent}
+.notif-title{font-size:13px;font-weight:600;color:var(--text)}
+.notif-body{font-size:12px;color:var(--text2);margin-top:2px}
+.notif-time{font-size:11px;color:var(--text3);margin-top:4px}
+.assign-detail-row{display:flex;gap:8px;align-items:baseline;margin-bottom:8px;font-size:13px}
+.assign-detail-lbl{color:var(--text2);min-width:90px;flex-shrink:0}
+.assign-detail-val{color:var(--text);font-weight:500}
+.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;z-index:200;font-size:18px;color:var(--primary);font-weight:700;backdrop-filter:blur(2px)}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+</style>
+</head>
+<body>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<div id="loginPage" class="page">
+  <div class="login-card">
+    <div class="login-logo">
+      <span class="icon-big">🎓</span>
+      <h1>منصة تسليم الأبحاث</h1>
+      <p>نظام إدارة الأبحاث والواجبات الأكاديمية</p>
+    </div>
+    <div class="role-tabs">
+      <div class="role-tab active" onclick="setRole('student')">طالب</div>
+      <div class="role-tab" onclick="setRole('admin')">مسؤول</div>
+    </div>
+    <div class="form-group">
+      <label>الرقم القومي</label>
+      <input type="text" id="loginId" placeholder="أدخل الرقم القومي" maxlength="14" />
+    </div>
+    <div class="form-group">
+      <label>كلمة المرور (اختيارية للطلاب)</label>
+      <input type="password" id="loginPass" placeholder="كلمة المرور" />
+    </div>
+    <div id="loginError" class="login-error hidden"></div>
+    <br>
+    <button class="btn btn-primary btn-block" onclick="doLogin()">دخول</button>
+    <div class="forgot-link" onclick="showForgotModal()">نسيت كلمة المرور؟</div>
+  </div>
+</div>
+
+<div id="appPage" class="page hidden">
+  <div class="topbar">
+    <div class="topbar-logo">🎓 منصة تسليم الأبحاث</div>
+    <div class="topbar-user" id="topbarUser"></div>
+    <div class="topbar-btns">
+      <button class="btn btn-ghost btn-sm" onclick="showChangePassModal()">تغيير كلمة المرور</button>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">خروج</button>
+    </div>
+  </div>
+  <div class="app-body">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main-content" id="mainContent"><div style="text-align:center;padding:40px;color:var(--text2)">جاري التحميل...</div></div>
+  </div>
+</div>
+
+<div id="modalBackdrop" class="modal-backdrop hidden" onclick="closeModal(event)">
+  <div class="modal" id="modalBox" onclick="event.stopPropagation()">
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+//  ضع بياناتك هنا
+const SUPABASE_URL = 'https://jivyhhdexcvxpjlujgpz.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppdnloaGRleGN2eHBqbHVqZ3B6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NjYxMjQsImV4cCI6MjA5MjA0MjEyNH0.QSehBWvhFeZIDha4FL222VShEjHEAcoqE2dVy-auhLs';
+// ═══════════════════════════════════════════
+
+async function sb(table, method='GET', body=null, query=''){
+  const url=`${SUPABASE_URL}/rest/v1/${table}${query}`;
+  const opts={method,headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=representation'}};
+  if(body)opts.body=JSON.stringify(body);
+  const r=await fetch(url,opts);
+  if(!r.ok){const e=await r.text();throw new Error(e);}
+  const ct=r.headers.get('content-type')||'';
+  if(ct.includes('json')&&r.status!==204)return r.json();
+  return [];
+}
+const DB={
+  async get(table,query=''){return sb(table,'GET',null,query);},
+  async insert(table,row){return sb(table,'POST',row);},
+  async update(table,query,data){return sb(table,'PATCH',data,query);},
+  async delete(table,query){return sb(table,'DELETE',null,query);}
+};
+
+function loading(show){
+  let el=document.getElementById('loadingOverlay');
+  if(show){if(!el){el=document.createElement('div');el.id='loadingOverlay';el.className='loading-overlay';el.textContent='⏳ جاري التحميل...';document.body.appendChild(el);}}
+  else{if(el)el.remove();}
+}
+
+let currentUser=null,currentRole=null,loginRole='student';
+
+function setRole(r){
+  loginRole=r;
+  document.querySelectorAll('.role-tab').forEach((t,i)=>t.classList.toggle('active',i===(r==='student'?0:1)));
+}
+
+async function doLogin(){
+  const id=document.getElementById('loginId').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  const errEl=document.getElementById('loginError');
+  errEl.classList.add('hidden');
+  if(!id){errEl.textContent='أدخل الرقم القومي';errEl.classList.remove('hidden');return;}
+  loading(true);
+  try{
+    if(loginRole==='admin'){
+      const rows=await DB.get('admin',`?id=eq.${id}`);
+      if(!rows.length||rows[0].pass!==pass){errEl.textContent='بيانات المسؤول غير صحيحة';errEl.classList.remove('hidden');loading(false);return;}
+      currentUser=rows[0];currentRole='admin';
+    } else {
+      const rows=await DB.get('students',`?id=eq.${id}`);
+      if(!rows.length){errEl.textContent='الرقم القومي غير مسجل';errEl.classList.remove('hidden');loading(false);return;}
+      const st=rows[0];
+      if(st.pass&&pass!==st.pass&&pass!==''){errEl.textContent='كلمة المرور غير صحيحة';errEl.classList.remove('hidden');loading(false);return;}
+      currentUser=st;currentRole='student';
+    }
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('appPage').classList.remove('hidden');
+    document.getElementById('topbarUser').textContent=(currentRole==='admin'?'المسؤول: ':'طالب: ')+(currentUser.name||currentUser.id);
+    buildSidebar();
+    navigate(currentRole==='admin'?'dashboard':'myAssignments');
+  }catch(e){errEl.textContent='خطأ في الاتصال بالخادم';errEl.classList.remove('hidden');}
+  loading(false);
+}
+
+function logout(){
+  currentUser=null;currentRole=null;
+  document.getElementById('appPage').classList.add('hidden');
+  document.getElementById('loginPage').classList.remove('hidden');
+  document.getElementById('loginId').value='';
+  document.getElementById('loginPass').value='';
+}
+
+function buildSidebar(){
+  const sidebar=document.getElementById('sidebar');
+  const adminNav=[
+    {id:'dashboard',icon:'📊',label:'لوحة التحكم'},
+    {id:'courses',icon:'📚',label:'المقررات'},
+    {id:'assignments',icon:'📝',label:'طلبات التسليم'},
+    {id:'submissions',icon:'📥',label:'التسليمات'},
+    {id:'students',icon:'👥',label:'الطلاب'},
+    {id:'settings',icon:'⚙️',label:'الإعدادات'},
+  ];
+  const studentNav=[
+    {id:'myAssignments',icon:'📝',label:'طلبات التسليم'},
+    {id:'mySubmissions',icon:'📁',label:'تسليماتي'},
+    {id:'notifications',icon:'🔔',label:'الإشعارات'},
+    {id:'profile',icon:'👤',label:'حسابي'},
+  ];
+  const nav=currentRole==='admin'?adminNav:studentNav;
+  sidebar.innerHTML=nav.map(n=>`<div class="nav-item" id="nav-${n.id}" onclick="navigate('${n.id}')"><span class="nav-icon">${n.icon}</span>${n.label}</div>`).join('');
+}
+
+async function navigate(page){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const el=document.getElementById('nav-'+page);if(el)el.classList.add('active');
+  const mc=document.getElementById('mainContent');
+  mc.innerHTML='<div style="text-align:center;padding:40px;color:var(--text2)">⏳ جاري التحميل...</div>';
+  loading(true);
+  try{
+    const pages={
+      dashboard:renderAdminDashboard,courses:renderCourses,
+      assignments:renderAssignments,submissions:renderAdminSubmissions,
+      students:renderStudents,settings:renderSettings,
+      myAssignments:renderStudentAssignments,mySubmissions:renderStudentSubmissions,
+      notifications:renderNotifications,profile:renderProfile,
+    };
+    if(pages[page])mc.innerHTML=await pages[page]();
+    else mc.innerHTML='<div class="card">قريباً</div>';
+  }catch(e){mc.innerHTML='<div class="card" style="color:var(--danger)">خطأ في تحميل البيانات</div>';}
+  loading(false);
+}
+
+async function renderAdminDashboard(){
+  const [courses,students,assignments,submissions]=await Promise.all([
+    DB.get('courses'),DB.get('students'),DB.get('assignments'),DB.get('submissions')
+  ]);
+  const pending=submissions.filter(s=>s.status==='pending').length;
+  return `<div class="stat-grid">
+    <div class="stat-card"><div class="stat-num">${courses.length}</div><div class="stat-lbl">المقررات</div></div>
+    <div class="stat-card"><div class="stat-num">${students.length}</div><div class="stat-lbl">الطلاب</div></div>
+    <div class="stat-card"><div class="stat-num">${assignments.length}</div><div class="stat-lbl">طلبات التسليم</div></div>
+    <div class="stat-card"><div class="stat-num">${pending}</div><div class="stat-lbl">بانتظار المراجعة</div></div>
+  </div>
+  <div class="card"><div class="card-title">📋 آخر التسليمات</div>
+  ${renderSubmissionsTable(submissions.slice(-5).reverse(),true,students,assignments)}</div>`;
+}
+
+async function renderCourses(){
+  const courses=await DB.get('courses');
+  return `<div class="card"><div class="card-title">📚 المقررات <button class="btn btn-primary btn-sm" style="margin-right:auto" onclick="showAddCourseModal()">+ إضافة مقرر</button></div>
+    ${courses.length===0?'<p style="color:var(--text2);text-align:center;padding:20px">لا توجد مقررات بعد</p>':''}
+    <div style="display:grid;gap:12px">${courses.map(c=>`
+      <div class="card" style="margin:0;padding:16px"><div style="display:flex;align-items:center;gap:10px">
+        <div style="flex:1"><div style="font-weight:700;font-size:15px;color:var(--primary)">${c.name}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px">${c.code||''} · ${(c.students||[]).length} طالب · ${(c.groups||[]).length} مجموعة</div></div>
+        <button class="btn btn-ghost btn-sm" onclick="showCourseDetail('${c.id}')">تفاصيل</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCourse('${c.id}')">حذف</button>
+      </div></div>`).join('')}</div></div>`;
+}
+
+async function renderStudents(){
+  const students=await DB.get('students');
+  return `<div class="card"><div class="card-title">👥 الطلاب <button class="btn btn-primary btn-sm" style="margin-right:auto" onclick="showAddStudentModal()">+ إضافة طالب</button></div>
+    <table class="tbl"><thead><tr><th>الاسم</th><th>الرقم القومي</th><th>البريد</th><th>كلمة المرور</th><th>إجراءات</th></tr></thead>
+    <tbody>${students.map(s=>`<tr>
+      <td>${s.name}</td><td style="direction:ltr;text-align:right">${s.id}</td>
+      <td>${s.email||'—'}</td>
+      <td><span class="badge badge-${s.pass?'success':'gray'}">${s.pass?'مضبوطة':'بدون'}</span></td>
+      <td style="display:flex;gap:4px"><button class="btn btn-ghost btn-sm" onclick="showEditStudentModal('${s.id}')">تعديل</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteStudent('${s.id}')">حذف</button></td>
+    </tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:var(--text2);padding:20px">لا يوجد طلاب</td></tr>'}
+    </tbody></table></div>`;
+}
+
+async function renderAssignments(){
+  const [assignments,courses,submissions]=await Promise.all([
+    DB.get('assignments'),DB.get('courses'),DB.get('submissions')
+  ]);
+  return `<div class="card"><div class="card-title">📝 طلبات التسليم <button class="btn btn-primary btn-sm" style="margin-right:auto" onclick="showAddAssignmentModal()">+ إنشاء طلب</button></div>
+    ${assignments.length===0?'<p style="text-align:center;color:var(--text2);padding:20px">لا توجد طلبات بعد</p>':''}
+    <div style="display:grid;gap:10px">${assignments.map(a=>{
+      const c=courses.find(x=>x.id===a.course_id);
+      const subs=submissions.filter(s=>s.assignment_id===a.id);
+      return `<div class="card" style="margin:0;padding:14px"><div style="display:flex;align-items:flex-start;gap:10px">
+        <div style="flex:1"><div style="font-weight:700;font-size:14px">${a.title}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px">${c?c.name:'—'} · ${a.target_type==='all'?'جميع الطلاب':'مجموعة: '+a.target_group} · الموعد: ${a.deadline||'مفتوح'}</div>
+        <div style="margin-top:6px;font-size:12px;color:var(--text2)">${subs.length} تسليم</div></div>
+        <span class="badge badge-${a.status==='open'?'success':'gray'}">${a.status==='open'?'مفتوح':'مغلق'}</span>
+        <button class="btn btn-ghost btn-sm" onclick="toggleAssignmentStatus('${a.id}','${a.status}')">${a.status==='open'?'إغلاق':'فتح'}</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteAssignment('${a.id}')">حذف</button>
+      </div></div>`;
+    }).join('')}</div></div>`;
+}
+
+async function renderAdminSubmissions(){
+  const [submissions,students,assignments]=await Promise.all([
+    DB.get('submissions','?order=submitted_at.desc'),
+    DB.get('students'),DB.get('assignments')
+  ]);
+  return `<div class="card"><div class="card-title">📥 التسليمات
+    <button class="btn btn-accent btn-sm" style="margin-right:auto" onclick="downloadAllSubmissions()">⬇️ تحميل الكل</button>
+  </div>${renderSubmissionsTable(submissions,true,students,assignments)}</div>`;
+}
+
+function renderSubmissionsTable(subs,admin,students,assignments){
+  if(!subs||!subs.length)return '<p style="text-align:center;color:var(--text2);padding:16px">لا توجد تسليمات</p>';
+  return `<table class="tbl"><thead><tr><th>الطالب</th><th>الطلب</th><th>التاريخ</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+  <tbody>${subs.map(s=>{
+    const a=assignments?assignments.find(x=>x.id===s.assignment_id):null;
+    const st=students?students.find(x=>x.id===s.student_id):null;
+    return `<tr><td>${st?st.name:s.student_id}</td><td>${a?a.title:'—'}</td>
+      <td style="font-size:12px;direction:ltr;text-align:right">${s.submitted_at||''}</td>
+      <td><span class="badge badge-${s.status==='accepted'?'success':s.status==='rejected'?'danger':s.status==='resubmit'?'warn':'info'}">${{pending:'قيد المراجعة',accepted:'مقبول',rejected:'مرفوض',resubmit:'إعادة تسليم'}[s.status]||s.status}</span></td>
+      <td style="display:flex;gap:4px;flex-wrap:wrap">
+        ${admin?`<button class="btn btn-success btn-sm" onclick="reviewSubmission('${s.id}','accepted')">قبول</button>
+        <button class="btn btn-danger btn-sm" onclick="reviewSubmission('${s.id}','rejected')">رفض</button>
+        <button class="btn btn-ghost btn-sm" onclick="reviewSubmission('${s.id}','resubmit')">إعادة</button>`:''}
+        <button class="btn btn-ghost btn-sm" onclick="downloadSubmission('${s.id}','${s.file_name}','${s.file_data?s.file_data.substring(0,30):''}')">⬇️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteSubmission('${s.id}')">🗑️</button>
+      </td></tr>`;
+  }).join('')}</tbody></table>`;
+}
+
+async function renderSettings(){
+  const rows=await DB.get('admin');const adm=rows[0]||{};
+  return `<div class="card"><div class="card-title">⚙️ إعدادات المسؤول</div>
+    <div class="form-group"><label>الرقم القومي</label><input type="text" value="${adm.id||''}" disabled style="background:var(--surface2)" /></div>
+    <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="adminEmail" value="${adm.email||''}" /></div>
+    <div class="form-group"><label>كلمة المرور الجديدة</label><input type="password" id="adminNewPass" placeholder="اتركه فارغاً لعدم التغيير" /></div>
+    <div class="form-group"><label>تأكيد كلمة المرور</label><input type="password" id="adminConfPass" /></div>
+    <button class="btn btn-primary" onclick="saveAdminSettings()">حفظ الإعدادات</button></div>`;
+}
+
+async function renderStudentAssignments(){
+  const [assignments,courses,submissions]=await Promise.all([
+    DB.get('assignments'),DB.get('courses'),DB.get('submissions')
+  ]);
+  const myCourses=courses.filter(c=>(c.students||[]).includes(currentUser.id));
+  const myCourseIds=myCourses.map(c=>c.id);
+  const myGroupIds=myCourses.flatMap(c=>(c.groups||[]).filter(g=>(g.members||[]).includes(currentUser.id)).map(g=>g.id));
+  const myAssignments=assignments.filter(a=>{
+    if(!myCourseIds.includes(a.course_id))return false;
+    if(a.target_type==='all')return true;
+    if(a.target_type==='group')return myGroupIds.includes(a.target_group_id);
+    return false;
+  });
+  if(!myAssignments.length)return `<div class="card"><p style="text-align:center;color:var(--text2);padding:24px">📭 لا توجد طلبات تسليم حالياً</p></div>`;
+  return `<div style="display:grid;gap:12px">${myAssignments.map(a=>{
+    const c=courses.find(x=>x.id===a.course_id);
+    const allSubs=submissions.filter(s=>s.assignment_id===a.id&&s.student_id===currentUser.id);
+    const mySub=allSubs.find(s=>s.status!=='rejected');
+    const isResubmit=allSubs.find(s=>s.status==='resubmit');
+    const canSubmit=a.status==='open'&&(!mySub||isResubmit);
+    return `<div class="card" style="margin:0">
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <div style="flex:1"><div style="font-weight:700;font-size:15px;color:var(--primary)">${a.title}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px">${c?c.name:'—'}</div>
+        ${a.description?`<div style="font-size:13px;color:var(--text);margin-top:8px">${a.description}</div>`:''}
+        <div style="margin-top:8px;font-size:12px;color:var(--text2)">📅 الموعد: <strong>${a.deadline||'مفتوح'}</strong>
+        ${a.max_size?` · 📦 الحجم الأقصى: ${a.max_size} MB`:''}
+        ${a.allowed_types?` · 📄 الأنواع: ${a.allowed_types}`:''}</div>
+        ${mySub&&!isResubmit?`<div style="margin-top:8px"><span class="badge badge-${mySub.status==='accepted'?'success':mySub.status==='pending'?'info':'warn'}">حالة تسليمك: ${{pending:'قيد المراجعة',accepted:'مقبول',resubmit:'يلزم إعادة'}[mySub.status]||mySub.status}</span></div>`:''}
+        ${isResubmit?`<div style="margin-top:8px"><span class="badge badge-warn">⚠️ مطلوب إعادة التسليم</span></div>`:''}</div>
+        <span class="badge badge-${a.status==='open'?'success':'gray'}">${a.status==='open'?'مفتوح':'مغلق'}</span>
+      </div>
+      ${canSubmit?`<div style="margin-top:14px;border-top:0.5px solid var(--border);padding-top:14px">
+        <button class="btn btn-primary btn-sm" onclick="showSubmitModal('${a.id}')">📤 ${isResubmit?'إعادة التسليم':'رفع التسليم'}</button></div>`:''}
+    </div>`;
+  }).join('')}</div>`;
+}
+
+async function renderStudentSubmissions(){
+  const [submissions,assignments,courses]=await Promise.all([
+    DB.get('submissions',`?student_id=eq.${currentUser.id}`),
+    DB.get('assignments'),DB.get('courses')
+  ]);
+  const byCourse={};
+  submissions.forEach(s=>{
+    const a=assignments.find(x=>x.id===s.assignment_id);if(!a)return;
+    const c=courses.find(x=>x.id===a.course_id);const key=c?c.id:'other';
+    if(!byCourse[key])byCourse[key]={name:c?c.name:'غير محدد',items:[]};
+    byCourse[key].items.push({...s,assignTitle:a.title});
+  });
+  if(!submissions.length)return `<div class="card"><p style="text-align:center;color:var(--text2);padding:24px">📭 لا توجد تسليمات بعد</p></div>`;
+  return Object.values(byCourse).map(g=>`<div class="card"><div class="card-title">📚 ${g.name}</div>
+    <table class="tbl"><thead><tr><th>الطلب</th><th>التاريخ</th><th>الحالة</th><th>ملف</th></tr></thead>
+    <tbody>${[...g.items].reverse().map(s=>`<tr><td>${s.assignTitle}</td>
+      <td style="font-size:12px;direction:ltr;text-align:right">${s.submitted_at||''}</td>
+      <td><span class="badge badge-${s.status==='accepted'?'success':s.status==='rejected'?'danger':s.status==='resubmit'?'warn':'info'}">${{pending:'قيد المراجعة',accepted:'مقبول',rejected:'مرفوض',resubmit:'إعادة تسليم'}[s.status]||s.status}</span></td>
+      <td><button class="btn btn-ghost btn-sm" onclick="downloadSubmission('${s.id}','${s.file_name||''}','')">⬇️ تحميل</button></td>
+    </tr>`).join('')}</tbody></table></div>`).join('');
+}
+
+async function renderNotifications(){
+  const notifs=await DB.get('notifications',`?student_id=eq.${currentUser.id}&order=created_at.desc`);
+  const unread=notifs.filter(n=>!n.is_read).length;
+  notifs.filter(n=>!n.is_read).forEach(n=>{
+    DB.update('notifications',`?id=eq.${n.id}`,{is_read:true});
+  });
+  if(!notifs.length)return `<div class="card"><p style="text-align:center;color:var(--text2);padding:24px">🔕 لا توجد إشعارات</p></div>`;
+  return `<div class="card"><div class="card-title">🔔 الإشعارات ${unread?`<span class="badge badge-danger">${unread} جديد</span>`:''}</div>
+    ${notifs.map(n=>`<div class="notif-item ${n.is_read?'':'unread'}">
+      <div class="notif-dot ${n.is_read?'read':''}"></div>
+      <div><div class="notif-title">${n.title}</div><div class="notif-body">${n.body}</div><div class="notif-time">${n.created_at||''}</div></div>
+    </div>`).join('')}</div>`;
+}
+
+async function renderProfile(){
+  return `<div class="card"><div class="card-title">👤 حسابي</div>
+    <div class="form-group"><label>الاسم</label><input type="text" value="${currentUser.name||''}" disabled style="background:var(--surface2)" /></div>
+    <div class="form-group"><label>الرقم القومي</label><input type="text" value="${currentUser.id}" disabled style="background:var(--surface2);direction:ltr" /></div>
+    <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="stEmail" value="${currentUser.email||''}" /></div>
+    <div class="form-group"><label>كلمة المرور الجديدة</label><input type="password" id="stNewPass" placeholder="اتركه فارغاً لعدم التغيير" /></div>
+    <div class="form-group"><label>تأكيد كلمة المرور</label><input type="password" id="stConfPass" /></div>
+    <button class="btn btn-primary" onclick="saveStudentProfile()">حفظ التغييرات</button></div>`;
+}
+
+function showModal(html){document.getElementById('modalContent').innerHTML=html;document.getElementById('modalBackdrop').classList.remove('hidden');}
+function closeModal(e){if(!e||e.target===document.getElementById('modalBackdrop'))document.getElementById('modalBackdrop').classList.add('hidden');}
+
+function showAddCourseModal(){
+  showModal(`<div class="modal-title">📚 إضافة مقرر جديد</div>
+    <div class="form-group"><label>اسم المقرر</label><input type="text" id="m_cname" /></div>
+    <div class="form-group"><label>كود المقرر</label><input type="text" id="m_ccode" /></div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
+    <button class="btn btn-primary" onclick="addCourse()">إضافة</button></div>`);
+}
+
+async function addCourse(){
+  const name=document.getElementById('m_cname').value.trim();
+  const code=document.getElementById('m_ccode').value.trim();
+  if(!name)return toast('أدخل اسم المقرر','error');
+  loading(true);
+  await DB.insert('courses',{id:'c'+Date.now(),name,code,students:[],groups:[]});
+  loading(false);closeModal();toast('تم إضافة المقرر','success');navigate('courses');
+}
+
+async function deleteCourse(id){
+  if(!confirm('هل تريد حذف هذا المقرر؟'))return;
+  loading(true);
+  await DB.delete('courses',`?id=eq.${id}`);
+  loading(false);toast('تم الحذف','success');navigate('courses');
+}
+
+async function showCourseDetail(id){
+  loading(true);
+  const [courses,students]=await Promise.all([DB.get('courses',`?id=eq.${id}`),DB.get('students')]);
+  loading(false);
+  const c=courses[0];if(!c)return;
+  const members=students.filter(s=>(c.students||[]).includes(s.id));
+  const nonMembers=students.filter(s=>!(c.students||[]).includes(s.id));
+  showModal(`<div class="modal-title">📚 ${c.name} — ${c.code||''}</div>
+    <div style="margin-bottom:14px"><strong style="font-size:13px">إضافة طالب للمقرر</strong>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <select id="m_addSt" style="flex:1"><option value="">اختر طالباً...</option>${nonMembers.map(s=>`<option value="${s.id}">${s.name} (${s.id})</option>`).join('')}</select>
+        <button class="btn btn-primary btn-sm" onclick="addStudentToCourse('${id}')">إضافة</button>
+      </div></div>
+    <div style="margin-bottom:14px"><strong style="font-size:13px">الطلاب (${members.length})</strong>
+      <div style="margin-top:8px;max-height:120px;overflow-y:auto">
+        ${members.map(s=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border)">
+          <span style="flex:1;font-size:13px">${s.name} — ${s.id}</span>
+          <button class="btn btn-danger btn-sm" onclick="removeStudentFromCourse('${id}','${s.id}')">إزالة</button>
+        </div>`).join('')||'<p style="color:var(--text2);font-size:13px">لا يوجد طلاب</p>'}
+      </div></div>
+    <div><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <strong style="font-size:13px;flex:1">المجموعات (${(c.groups||[]).length})</strong>
+      <button class="btn btn-accent btn-sm" onclick="showAddGroupModal('${id}')">+ مجموعة</button></div>
+      ${(c.groups||[]).map(g=>`<div style="background:var(--surface2);border-radius:8px;padding:10px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;margin-bottom:6px">
+          <span style="font-weight:600;font-size:13px;flex:1">${g.name}</span>
+          <button class="btn btn-danger btn-sm" onclick="deleteGroup('${id}','${g.id}')">حذف</button></div>
+        <div>${(g.members||[]).map(mid=>{const st=students.find(x=>x.id===mid);return`<span class="student-chip">${st?st.name:mid}</span>`;}).join('')||'<span style="font-size:12px;color:var(--text3)">لا أعضاء</span>'}</div>
+      </div>`).join('')||'<p style="color:var(--text2);font-size:13px">لا توجد مجموعات</p>'}
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">إغلاق</button></div>`);
+}
+
+async function addStudentToCourse(cid){
+  const sid=document.getElementById('m_addSt').value;if(!sid)return toast('اختر طالباً','error');
+  loading(true);
+  const rows=await DB.get('courses',`?id=eq.${cid}`);const c=rows[0];
+  const arr=c.students||[];if(!arr.includes(sid))arr.push(sid);
+  await DB.update('courses',`?id=eq.${cid}`,{students:arr});
+  loading(false);toast('تم إضافة الطالب','success');showCourseDetail(cid);
+}
+
+async function removeStudentFromCourse(cid,sid){
+  loading(true);
+  const rows=await DB.get('courses',`?id=eq.${cid}`);const c=rows[0];
+  c.students=(c.students||[]).filter(x=>x!==sid);
+  c.groups=(c.groups||[]).map(g=>({...g,members:(g.members||[]).filter(x=>x!==sid)}));
+  await DB.update('courses',`?id=eq.${cid}`,{students:c.students,groups:c.groups});
+  loading(false);toast('تم الإزالة','success');showCourseDetail(cid);
+}
+
+async function showAddGroupModal(cid){
+  loading(true);
+  const [courses,students]=await Promise.all([DB.get('courses',`?id=eq.${cid}`),DB.get('students')]);
+  loading(false);
+  const c=courses[0];const members=students.filter(s=>(c.students||[]).includes(s.id));
+  showModal(`<div class="modal-title">👥 إضافة مجموعة — ${c.name}</div>
+    <div class="form-group"><label>اسم المجموعة</label><input type="text" id="m_gname" /></div>
+    <div class="form-group"><label>أعضاء المجموعة</label>
+      ${members.map(s=>`<label style="display:block;padding:4px 0;font-size:13px;cursor:pointer">
+        <input type="checkbox" class="gm_check" value="${s.id}" /> ${s.name} (${s.id})</label>`).join('')||'<p style="color:var(--text2);font-size:13px">لا يوجد طلاب</p>'}
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="showCourseDetail('${cid}')">رجوع</button>
+    <button class="btn btn-primary" onclick="addGroup('${cid}')">إضافة</button></div>`);
+}
+
+async function addGroup(cid){
+  const name=document.getElementById('m_gname').value.trim();
+  const members=[...document.querySelectorAll('.gm_check:checked')].map(x=>x.value);
+  if(!name)return toast('أدخل اسم المجموعة','error');
+  loading(true);
+  const rows=await DB.get('courses',`?id=eq.${cid}`);const c=rows[0];
+  const groups=c.groups||[];groups.push({id:'g'+Date.now(),name,members});
+  await DB.update('courses',`?id=eq.${cid}`,{groups});
+  loading(false);toast('تم إضافة المجموعة','success');showCourseDetail(cid);
+}
+
+async function deleteGroup(cid,gid){
+  loading(true);
+  const rows=await DB.get('courses',`?id=eq.${cid}`);const c=rows[0];
+  c.groups=(c.groups||[]).filter(g=>g.id!==gid);
+  await DB.update('courses',`?id=eq.${cid}`,{groups:c.groups});
+  loading(false);toast('تم حذف المجموعة','success');showCourseDetail(cid);
+}
+
+function showAddStudentModal(){
+  showModal(`<div class="modal-title">👤 إضافة طالب جديد</div>
+    <div class="form-group"><label>الاسم</label><input type="text" id="m_sname" /></div>
+    <div class="form-group"><label>الرقم القومي</label><input type="text" id="m_sid" maxlength="14" style="direction:ltr" /></div>
+    <div class="form-group"><label>البريد الإلكتروني (اختياري)</label><input type="email" id="m_semail" /></div>
+    <div class="form-group"><label>كلمة المرور (اختيارية)</label><input type="password" id="m_spass" /></div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
+    <button class="btn btn-primary" onclick="addStudent()">إضافة</button></div>`);
+}
+
+async function addStudent(){
+  const name=document.getElementById('m_sname').value.trim();
+  const id=document.getElementById('m_sid').value.trim();
+  const email=document.getElementById('m_semail').value.trim();
+  const pass=document.getElementById('m_spass').value;
+  if(!name||!id)return toast('أدخل الاسم والرقم القومي','error');
+  loading(true);
+  const existing=await DB.get('students',`?id=eq.${id}`);
+  if(existing.length){loading(false);return toast('الرقم القومي مسجل بالفعل','error');}
+  await DB.insert('students',{id,name,email,pass});
+  loading(false);closeModal();toast('تم إضافة الطالب','success');navigate('students');
+}
+
+async function showEditStudentModal(sid){
+  loading(true);
+  const rows=await DB.get('students',`?id=eq.${sid}`);
+  loading(false);
+  const st=rows[0];
+  showModal(`<div class="modal-title">✏️ تعديل بيانات الطالب</div>
+    <div class="form-group"><label>الاسم</label><input type="text" id="m_ename" value="${st.name}" /></div>
+    <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="m_eemail" value="${st.email||''}" /></div>
+    <div class="form-group"><label>كلمة المرور الجديدة</label><input type="password" id="m_epass" /></div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
+    <button class="btn btn-primary" onclick="editStudent('${sid}')">حفظ</button></div>`);
+}
+
+async function editStudent(sid){
+  const name=document.getElementById('m_ename').value.trim();
+  const email=document.getElementById('m_eemail').value.trim();
+  const pass=document.getElementById('m_epass').value;
+  const data={name,email};if(pass)data.pass=pass;
+  loading(true);
+  await DB.update('students',`?id=eq.${sid}`,data);
+  if(currentRole==='student'&&currentUser.id===sid)currentUser={...currentUser,...data};
+  loading(false);closeModal();toast('تم التحديث','success');navigate('students');
+}
+
+async function deleteStudent(id){
+  if(!confirm('هل تريد حذف هذا الطالب؟'))return;
+  loading(true);
+  await DB.delete('students',`?id=eq.${id}`);
+  loading(false);toast('تم الحذف','success');navigate('students');
+}
+
+async function showAddAssignmentModal(){
+  const courses=await DB.get('courses');
+  showModal(`<div class="modal-title">📝 إنشاء طلب تسليم</div>
+    <div class="form-group"><label>العنوان</label><input type="text" id="m_atitle" /></div>
+    <div class="form-group"><label>الوصف</label><textarea id="m_adesc"></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label>المقرر</label>
+        <select id="m_acourse" onchange="updateGroupSelect()"><option value="">اختر المقرر</option>
+        ${courses.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}</select></div>
+      <div class="form-group"><label>الموعد النهائي</label><input type="datetime-local" id="m_adeadline" /></div>
+    </div>
+    <div class="form-group"><label>المستهدفون</label>
+      <select id="m_atarget" onchange="toggleGroupSelect()">
+        <option value="all">جميع طلاب المقرر</option>
+        <option value="group">مجموعة محددة</option>
+      </select></div>
+    <div class="form-group hidden" id="m_groupWrap"><label>المجموعة</label>
+      <select id="m_agroup"><option value="">اختر المجموعة</option></select></div>
+    <div class="form-row">
+      <div class="form-group"><label>الحجم الأقصى (MB)</label><input type="number" id="m_asize" /></div>
+      <div class="form-group"><label>أنواع الملفات المسموحة</label><input type="text" id="m_atypes" placeholder="pdf, docx, zip" /></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
+    <button class="btn btn-primary" onclick="addAssignment()">إرسال الطلب</button></div>`);
+}
+
+function toggleGroupSelect(){
+  document.getElementById('m_groupWrap').classList.toggle('hidden',document.getElementById('m_atarget').value!=='group');
+}
+
+async function updateGroupSelect(){
+  const cid=document.getElementById('m_acourse').value;
+  if(!cid)return;
+  const rows=await DB.get('courses',`?id=eq.${cid}`);const c=rows[0];
+  const sel=document.getElementById('m_agroup');if(!sel)return;
+  sel.innerHTML='<option value="">اختر المجموعة</option>'+((c&&c.groups)||[]).map(g=>`<option value="${g.id}">${g.name}</option>`).join('');
+}
+
+async function addAssignment(){
+  const title=document.getElementById('m_atitle').value.trim();
+  const desc=document.getElementById('m_adesc').value.trim();
+  const courseId=document.getElementById('m_acourse').value;
+  const deadline=document.getElementById('m_adeadline').value;
+  const targetType=document.getElementById('m_atarget').value;
+  const targetGroupId=document.getElementById('m_agroup')?document.getElementById('m_agroup').value:'';
+  const maxSize=document.getElementById('m_asize').value;
+  const allowedTypes=document.getElementById('m_atypes').value;
+  if(!title||!courseId)return toast('أدخل العنوان واختر المقرر','error');
+  if(targetType==='group'&&!targetGroupId)return toast('اختر المجموعة','error');
+  loading(true);
+  const rows=await DB.get('courses',`?id=eq.${courseId}`);const c=rows[0];
+  const g=targetType==='group'?(c.groups||[]).find(x=>x.id===targetGroupId):null;
+  const now=new Date().toLocaleString('ar-EG');
+  const a={id:'a'+Date.now(),title,description:desc,course_id:courseId,deadline,
+    target_type:targetType,target_group_id:targetGroupId,target_group:g?g.name:'',
+    max_size:maxSize,allowed_types:allowedTypes,status:'open',created_at:now};
+  await DB.insert('assignments',a);
+  const targetStudents=targetType==='all'?c.students:(g?g.members:[]);
+  for(const sid of targetStudents){
+    await DB.insert('notifications',{
+      id:'n'+Date.now()+Math.random(),student_id:sid,type:'assignment',is_read:false,
+      title:'📝 طلب تسليم جديد: '+title,
+      body:`المقرر: ${c.name} · الموعد: ${deadline||'مفتوح'}`,
+      created_at:now
+    });
+  }
+  loading(false);closeModal();toast('تم إرسال الطلب','success');navigate('assignments');
+}
+
+async function toggleAssignmentStatus(id,current){
+  loading(true);
+  await DB.update('assignments',`?id=eq.${id}`,{status:current==='open'?'closed':'open'});
+  loading(false);toast('تم تغيير الحالة','success');navigate('assignments');
+}
+
+async function deleteAssignment(id){
+  if(!confirm('سيتم حذف الطلب وجميع تسليماته'))return;
+  loading(true);
+  await DB.delete('assignments',`?id=eq.${id}`);
+  await DB.delete('submissions',`?assignment_id=eq.${id}`);
+  loading(false);toast('تم الحذف','success');navigate('assignments');
+}
+
+async function showSubmitModal(aid){
+  const rows=await DB.get('assignments',`?id=eq.${aid}`);const a=rows[0];
+  showModal(`<div class="modal-title">📤 رفع التسليم</div>
+    <div style="background:var(--surface2);border-radius:8px;padding:12px;margin-bottom:16px">
+      <div class="assign-detail-row"><span class="assign-detail-lbl">الطلب:</span><span class="assign-detail-val">${a.title}</span></div>
+      ${a.deadline?`<div class="assign-detail-row"><span class="assign-detail-lbl">الموعد:</span><span class="assign-detail-val">${a.deadline}</span></div>`:''}
+      ${a.allowed_types?`<div class="assign-detail-row"><span class="assign-detail-lbl">الأنواع:</span><span class="assign-detail-val">${a.allowed_types}</span></div>`:''}
+    </div>
+    <div class="form-group"><label>ملاحظات (اختياري)</label><textarea id="m_snotes"></textarea></div>
+    <div style="border:2px dashed var(--border);border-radius:10px;padding:28px;text-align:center;cursor:pointer;background:var(--surface2)"
+      onclick="document.getElementById('fileIn').click()"
+      ondragover="event.preventDefault();this.style.borderColor='var(--accent)'"
+      ondragleave="this.style.borderColor='var(--border)'"
+      ondrop="handleDrop(event)">
+      <div style="font-size:32px;margin-bottom:8px">📁</div>
+      <div style="font-size:13px;color:var(--text2)">اضغط لاختيار ملف أو اسحبه هنا</div>
+      <input type="file" id="fileIn" style="display:none" onchange="handleFileSelect(this)" />
+    </div>
+    <div id="filePreview"></div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
+    <button class="btn btn-primary" onclick="submitAssignment('${aid}')">رفع التسليم</button></div>`);
+}
+
+let selectedFile=null;
+function handleFileSelect(inp){
+  selectedFile=inp.files[0];
+  if(selectedFile)document.getElementById('filePreview').innerHTML=`<div class="file-preview"><span>📄 ${selectedFile.name}</span><span style="color:var(--text2)">${(selectedFile.size/1024).toFixed(1)} KB</span></div>`;
+}
+function handleDrop(e){
+  e.preventDefault();selectedFile=e.dataTransfer.files[0];
+  if(selectedFile)document.getElementById('filePreview').innerHTML=`<div class="file-preview"><span>📄 ${selectedFile.name}</span><span>${(selectedFile.size/1024).toFixed(1)} KB</span></div>`;
+}
+
+async function submitAssignment(aid){
+  if(!selectedFile)return toast('اختر ملفاً أولاً','error');
+  const notes=document.getElementById('m_snotes').value;
+  const reader=new FileReader();
+  reader.onload=async function(e){
+    loading(true);
+    // حذف التسليم القديم "resubmit" إن وجد
+    const old=await DB.get('submissions',`?assignment_id=eq.${aid}&student_id=eq.${currentUser.id}&status=eq.resubmit`);
+    for(const o of old)await DB.delete('submissions',`?id=eq.${o.id}`);
+    await DB.insert('submissions',{
+      id:'s'+Date.now(),assignment_id:aid,student_id:currentUser.id,
+      file_name:selectedFile.name,file_data:e.target.result,
+      notes,status:'pending',submitted_at:new Date().toLocaleString('ar-EG')
+    });
+    loading(false);selectedFile=null;closeModal();toast('تم رفع التسليم بنجاح','success');navigate('myAssignments');
+  };
+  reader.readAsDataURL(selectedFile);
+}
+
+async function reviewSubmission(id,action){
+  loading(true);
+  await DB.update('submissions',`?id=eq.${id}`,{status:action});
+  const rows=await DB.get('submissions',`?id=eq.${id}`);const s=rows[0];
+  const aRows=await DB.get('assignments',`?id=eq.${s.assignment_id}`);const a=aRows[0];
+  await DB.insert('notifications',{
+    id:'n'+Date.now(),student_id:s.student_id,type:'review',is_read:false,
+    title:{accepted:'✅ تم قبول تسليمك',rejected:'❌ تم رفض تسليمك',resubmit:'⚠️ مطلوب إعادة التسليم'}[action],
+    body:`للطلب: ${a?a.title:'—'}`,created_at:new Date().toLocaleString('ar-EG')
+  });
+  loading(false);toast('تم التحديث','success');navigate('submissions');
+}
+
+async function downloadSubmission(id,fileName,_){
+  loading(true);
+  const rows=await DB.get('submissions',`?id=eq.${id}`);
+  loading(false);
+  const s=rows[0];if(!s||!s.file_data){toast('لا يوجد ملف','error');return;}
+  const a=document.createElement('a');a.href=s.file_data;a.download=s.file_name||fileName||'submission';a.click();
+}
+
+async function downloadAllSubmissions(){
+  loading(true);
+  const submissions=await DB.get('submissions');
+  loading(false);
+  if(!submissions.length){toast('لا توجد تسليمات','error');return;}
+  submissions.forEach((s,i)=>{setTimeout(()=>{if(s.file_data){const a=document.createElement('a');a.href=s.file_data;a.download=s.file_name||'submission_'+i;a.click();}},i*400);});
+  toast('جاري تحميل جميع التسليمات...','info');
+}
+
+async function deleteSubmission(id){
+  if(!confirm('هل تريد حذف هذا التسليم نهائياً؟'))return;
+  loading(true);
+  await DB.delete('submissions',`?id=eq.${id}`);
+  loading(false);toast('تم الحذف','success');navigate('submissions');
+}
+
+async function saveAdminSettings(){
+  const email=document.getElementById('adminEmail').value;
+  const np=document.getElementById('adminNewPass').value;
+  const cp=document.getElementById('adminConfPass').value;
+  if(np&&np!==cp)return toast('كلمتا المرور غير متطابقتين','error');
+  const data={email};if(np)data.pass=np;
+  loading(true);
+  await DB.update('admin',`?id=eq.${currentUser.id}`,data);
+  currentUser={...currentUser,...data};
+  loading(false);toast('تم الحفظ','success');
+}
+
+async function saveStudentProfile(){
+  const email=document.getElementById('stEmail').value;
+  const np=document.getElementById('stNewPass').value;
+  const cp=document.getElementById('stConfPass').value;
+  if(np&&np!==cp)return toast('كلمتا المرور غير متطابقتين','error');
+  const data={email};if(np)data.pass=np;
+  loading(true);
+  await DB.update('students',`?id=eq.${currentUser.id}`,data);
+  currentUser={...currentUser,...data};
+  loading(false);toast('تم الحفظ','success');
+}
+
+function showChangePassModal(){
+  showModal(`<div class="modal-title">🔑 تغيير كلمة المرور</div>
+    <div class="form-group"><label>كلمة المرور الجديدة</label><input type="password" id="cp_new" /></div>
+    <div class="form-group"><label>تأكيد كلمة المرور</label><input type="password" id="cp_conf" /></div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
+    <button class="btn btn-primary" onclick="changePass()">تغيير</button></div>`);
+}
+
+async function changePass(){
+  const np=document.getElementById('cp_new').value;const cp=document.getElementById('cp_conf').value;
+  if(!np)return toast('أدخل كلمة المرور','error');
+  if(np!==cp)return toast('كلمتا المرور غير متطابقتين','error');
+  loading(true);
+  if(currentRole==='admin'){await DB.update('admin',`?id=eq.${currentUser.id}`,{pass:np});}
+  else{await DB.update('students',`?id=eq.${currentUser.id}`,{pass:np});}
+  currentUser={...currentUser,pass:np};
+  loading(false);closeModal();toast('تم تغيير كلمة المرور','success');
+}
+
+function showForgotModal(){
+  showModal(`<div class="modal-title">🔑 استعادة كلمة المرور</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px">أدخل بريدك الإلكتروني المسجل</p>
+    <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="fg_email" /></div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
+    <button class="btn btn-primary" onclick="forgotPass()">إرسال</button></div>`);
+}
+
+async function forgotPass(){
+  const email=document.getElementById('fg_email').value.trim();
+  if(!email)return toast('أدخل البريد الإلكتروني','error');
+  loading(true);
+  const students=await DB.get('students',`?email=eq.${email}`);
+  const adm=await DB.get('admin',`?email=eq.${email}`);
+  loading(false);
+  if(!students.length&&!adm.length)return toast('البريد غير مسجل في النظام','error');
+  toast('تم إرسال رابط الاستعادة إلى بريدك','info');closeModal();
+}
+
+function toast(msg,type='info'){
+  const wrap=document.getElementById('toastWrap');const t=document.createElement('div');
+  t.className=`toast toast-${type}`;t.textContent=msg;wrap.appendChild(t);
+  setTimeout(()=>t.remove(),3000);
+}
+</script>
+</body>
+</html>
