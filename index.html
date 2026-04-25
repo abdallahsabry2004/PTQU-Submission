@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة التسليم الأكاديمية - كلية العلاج الطبيعي جامعة قنا</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .role-selector{display:flex;gap:10px;margin-bottom:25px}
+        .role-btn{flex:1;padding:15px;border:2px solid var(--border);border-radius:10px;background:white;cursor:pointer;transition:var(--trans);text-align:center;font-family:inherit}
+        .role-btn i{font-size:1.5rem;margin-bottom:8px;display:block;color:var(--text2)}
+        .role-btn span{font-size:0.9rem;font-weight:600;color:var(--text)}
+        .role-btn:hover{border-color:var(--primary-light)}
+        .role-btn.active{border-color:var(--primary);background:#f0f7ff}
+        .role-btn.active i{color:var(--primary)}
+        .login-form{display:none}
+        .login-form.active{display:block;animation:fadeIn 0.3s ease}
+        .forgot-link{text-align:center;margin-top:15px}
+        .forgot-link a{color:var(--primary-light);text-decoration:none;font-size:0.9rem}
+        .forgot-link a:hover{text-decoration:underline}
+        .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:30px}
+        .feature-item{text-align:center;padding:15px}
+        .feature-item i{font-size:1.5rem;color:var(--primary-light);margin-bottom:8px}
+        .feature-item span{font-size:0.8rem;color:var(--text2);display:block}
+    </style>
+</head>
+<body>
+    <div class="loading-screen" id="loading">
+        <div class="loader"></div>
+        <div class="loading-text">جاري التحميل...</div>
+    </div>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                <h1>منصة التسليم الأكاديمية</h1>
+                <p>كلية العلاج الطبيعي - جامعة قنا</p>
+                <p style="font-size:0.8rem;color:var(--text2);margin-top:5px">منصة متكاملة تربط الطلاب بالمسؤولين الأكاديميين</p>
+            </div>
+
+            <div class="role-selector">
+                <button class="role-btn active" data-role="student" onclick="switchRole('student')">
+                    <i class="fas fa-user-graduate"></i>
+                    <span>طالب</span>
+                </button>
+                <button class="role-btn" data-role="supervisor" onclick="switchRole('supervisor')">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>مشرف</span>
+                </button>
+                <button class="role-btn" data-role="admin" onclick="switchRole('admin')">
+                    <i class="fas fa-user-shield"></i>
+                    <span>مسؤول</span>
+                </button>
+            </div>
+
+            <div id="alert-container"></div>
+
+            <form class="login-form active" id="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>الرقم القومي</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-id-card input-icon"></i>
+                        <input type="text" class="form-control" id="nationalId" placeholder="أدخل الرقم القومي (14 رقم)" maxlength="14" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>كلمة المرور</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" class="form-control" id="password" placeholder="أدخل كلمة المرور">
+                        <button type="button" class="password-toggle"><i class="fas fa-eye"></i></button>
+                    </div>
+                    <div class="password-strength" id="pwd-strength" style="display:none">
+                        <div class="password-strength-bar" id="pwd-bar"></div>
+                    </div>
+                    <div class="password-strength-text" id="pwd-text"></div>
+                </div>
+                <button type="submit" class="btn btn-primary" id="login-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    تسجيل الدخول
+                </button>
+            </form>
+
+            <div class="forgot-link">
+                <a href="pages/forgot-password.html">نسيت كلمة المرور؟</a>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-item">
+                    <i class="fas fa-book"></i>
+                    <span>إدارة المقررات</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-users"></i>
+                    <span>تقسيم المجموعات</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-file-upload"></i>
+                    <span>تسليم الأبحاث</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        let currentRole = 'student';
+
+        function switchRole(role) {
+            currentRole = role;
+            document.querySelectorAll('.role-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.role === role);
+            });
+            const pwd = document.getElementById('password');
+            if (role === 'student') {
+                pwd.placeholder = 'أدخل كلمة المرور (إذا كنت قد أنشأتها)';
+                pwd.required = false;
+            } else {
+                pwd.placeholder = 'أدخل كلمة المرور';
+                pwd.required = true;
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const nid = document.getElementById('nationalId').value.trim();
+            const pwd = document.getElementById('password').value;
+            const btn = document.getElementById('login-btn');
+
+            btn.classList.add('btn-loading');
+            btn.disabled = true;
+
+            setTimeout(() => {
+                const res = Auth.login(nid, pwd, currentRole);
+                if (res.success) {
+                    Utils.toast(res.msg, 'success');
+                    setTimeout(() => {
+                        if (currentRole === 'admin') window.location.href = 'pages/admin-dashboard.html';
+                        else if (currentRole === 'supervisor') window.location.href = 'pages/supervisor-dashboard.html';
+                        else window.location.href = 'pages/student-dashboard.html';
+                    }, 500);
+                } else {
+                    Utils.showAlert('alert-container', res.msg, 'danger');
+                    btn.classList.remove('btn-loading');
+                    btn.disabled = false;
+                }
+            }, 800);
+        }
+
+        document.getElementById('password').addEventListener('input', function() {
+            if (this.value.length > 0) {
+                const s = Utils.pwdStrength(this.value);
+                document.getElementById('pwd-strength').style.display = 'block';
+                document.getElementById('pwd-bar').style.width = s.w;
+                document.getElementById('pwd-bar').style.background = s.c;
+                document.getElementById('pwd-text').textContent = 'قوة كلمة المرور: ' + s.t;
+                document.getElementById('pwd-text').style.color = s.c;
+            } else {
+                document.getElementById('pwd-strength').style.display = 'none';
+                document.getElementById('pwd-text').textContent = '';
+            }
+        });
+
+        window.addEventListener('load', () => {
+            setTimeout(() => document.getElementById('loading').classList.add('hidden'), 1000);
+        });
+    </script>
+</body>
+</html>
