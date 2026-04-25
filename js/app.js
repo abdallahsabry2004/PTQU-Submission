@@ -6,8 +6,8 @@
 // ============================================
 
 // ⬇⬇⬇ ضع بيانات Supabase هنا ⬇⬇⬇
-const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
+const SUPABASE_URL = 'https://bwnfvdighszbbicdetxu.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3bmZ2ZGlnaHN6YmJpY2RldHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNjYwNDgsImV4cCI6MjA5MjY0MjA0OH0.xKr7U85P3r9fIpQGn8vDsWAKVLNYTFt_M7G1FHMeHPk';
 // ⬆⬆⬆ ضع بيانات Supabase هنا ⬆⬆⬆
 
 // Initialize Supabase client (loaded from CDN)
