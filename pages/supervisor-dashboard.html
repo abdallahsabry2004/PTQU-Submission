@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>واجهة المشرف - منصة التسليم الأكاديمية</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+.filter-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.filter-bar select,.filter-bar input{padding:10px 15px;border:2px solid var(--border);border-radius:8px;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="loading-screen" id="loading"><div class="loader"></div><div class="loading-text">جاري التحميل...</div></div>
+
+<div class="dashboard-container">
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+<h2>منصة التسليم الأكاديمية</h2>
+<p>كلية العلاج الطبيعي - جامعة قنا</p>
+</div>
+<ul class="sidebar-menu">
+<li><a href="#" class="active" onclick="showSection('dashboard',this)"><i class="fas fa-home"></i> الرئيسية</a></li>
+<li><a href="#" onclick="showSection('assignments',this)"><i class="fas fa-tasks"></i> التسليمات</a></li>
+<li><a href="#" onclick="showSection('submissions',this)"><i class="fas fa-file-alt"></i> التسليمات الواردة</a></li>
+<li><a href="#" onclick="showSection('settings',this)"><i class="fas fa-cog"></i> الإعدادات</a></li>
+</ul>
+<div class="sidebar-footer">
+<div class="user-info">
+<div class="user-avatar"><i class="fas fa-chalkboard-teacher"></i></div>
+<div class="user-details"><h4 id="user-name">مشرف</h4><p>مشرف أكاديمي</p></div>
+</div>
+<button class="logout-btn" onclick="Auth.logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+</div>
+</aside>
+
+<div class="main-content">
+<div class="top-bar">
+<div class="page-title"><h1 id="page-title">لوحة المشرف</h1><p>إدارة التسليمات والطلاب</p></div>
+<div class="top-bar-actions">
+<button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+</div>
+</div>
+
+<!-- Dashboard -->
+<div id="sec-dashboard" class="tab-panel active">
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-icon blue"><i class="fas fa-tasks"></i></div><div class="stat-info"><h3 id="stat-assignments">0</h3><p>التسليمات المنشأة</p></div></div>
+<div class="stat-card"><div class="stat-icon orange"><i class="fas fa-file-alt"></i></div><div class="stat-info"><h3 id="stat-pending">0</h3><p>بانتظار المراجعة</p></div></div>
+<div class="stat-card"><div class="stat-icon green"><i class="fas fa-check-circle"></i></div><div class="stat-info"><h3 id="stat-approved">0</h3><p>تم قبولها</p></div></div>
+<div class="stat-card"><div class="stat-icon red"><i class="fas fa-times-circle"></i></div><div class="stat-info"><h3 id="stat-rejected">0</h3><p>تم رفضها</p></div></div>
+</div>
+</div>
+
+<!-- Assignments -->
+<div id="sec-assignments" class="tab-panel">
+<div class="card"><div class="card-header"><h3><i class="fas fa-tasks"></i> التسليمات</h3></div>
+<div class="card-body">
+<div class="form-group"><label>اختر المقرر</label><select id="assign-course-select" class="form-control" onchange="renderAssignments()"><option value="">اختر مقرراً</option></select></div>
+<button class="btn btn-success btn-sm" onclick="openModal('assignment-modal')" style="margin-bottom:20px"><i class="fas fa-plus"></i> تسليم جديد</button>
+<div id="assignments-list"></div>
+</div></div>
+</div>
+
+<!-- Submissions -->
+<div id="sec-submissions" class="tab-panel">
+<div class="card"><div class="card-header"><h3><i class="fas fa-file-alt"></i> التسليمات الواردة</h3></div>
+<div class="card-body">
+<div class="filter-bar">
+<select id="sub-course-filter" onchange="renderSubmissions()"><option value="">كل المقررات</option></select>
+<select id="sub-status-filter" onchange="renderSubmissions()"><option value="">كل الحالات</option><option value="pending">معلق</option><option value="approved">مقبول</option><option value="rejected">مرفوض</option><option value="revision">يحتاج تعديل</option></select>
+</div>
+<div id="submissions-list"></div>
+</div></div>
+</div>
+
+<!-- Settings -->
+<div id="sec-settings" class="tab-panel">
+<div class="card"><div class="card-header"><h3><i class="fas fa-cog"></i> إعدادات الحساب</h3></div>
+<div class="card-body">
+<div class="form-group"><label>الاسم</label><input type="text" class="form-control" id="sett-name" readonly></div>
+<div class="form-group"><label>الرقم القومي</label><input type="text" class="form-control" id="sett-nid" readonly></div>
+<div class="form-group"><label>البريد الإلكتروني</label><input type="email" class="form-control" id="sett-email"></div>
+<hr style="margin:25px 0;border:none;border-top:1px solid var(--border)">
+<h4 style="margin-bottom:20px">تغيير كلمة المرور</h4>
+<div class="form-group"><label>كلمة المرور الحالية</label><div class="input-wrapper"><input type="password" class="form-control" id="sett-old-pwd"><button type="button" class="password-toggle"><i class="fas fa-eye"></i></button></div></div>
+<div class="form-group"><label>كلمة المرور الجديدة</label><div class="input-wrapper"><input type="password" class="form-control" id="sett-new-pwd"><button type="button" class="password-toggle"><i class="fas fa-eye"></i></button></div></div>
+<div class="form-group"><label>تأكيد كلمة المرور الجديدة</label><div class="input-wrapper"><input type="password" class="form-control" id="sett-confirm-pwd"><button type="button" class="password-toggle"><i class="fas fa-eye"></i></button></div></div>
+<button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> حفظ التغييرات</button>
+</div></div>
+</div>
+
+</div>
+</div>
+
+<!-- Assignment Modal -->
+<div class="modal-overlay" id="assignment-modal"><div class="modal">
+<div class="modal-header"><h3>تسليم جديد</h3><button class="modal-close" onclick="closeModal('assignment-modal')">&times;</button></div>
+<div class="modal-body">
+<div class="form-group"><label>عنوان التسليم *</label><input type="text" class="form-control" id="a-title" placeholder="عنوان التسليم"></div>
+<div class="form-group"><label>الوصف</label><textarea class="form-control" id="a-desc" rows="3"></textarea></div>
+<div class="form-group"><label>تاريخ الاستحقاق</label><input type="datetime-local" class="form-control" id="a-due"></div>
+<div class="form-group"><label>نوع التسليم</label><select class="form-control" id="a-type" onchange="toggleGroupSelect()"><option value="individual">فردي</option><option value="group">مجموعة</option></select></div>
+<div class="form-group" id="a-group-wrap" style="display:none"><label>المجموعة</label><select class="form-control" id="a-group"></select></div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary btn-sm" onclick="closeModal('assignment-modal')">إلغاء</button><button class="btn btn-success btn-sm" onclick="saveAssignment()"><i class="fas fa-save"></i> حفظ</button></div>
+</div></div>
+
+<!-- Review Modal -->
+<div class="modal-overlay" id="review-modal"><div class="modal">
+<div class="modal-header"><h3>مراجعة التسليم</h3><button class="modal-close" onclick="closeModal('review-modal')">&times;</button></div>
+<div class="modal-body">
+<div id="review-details"></div>
+<div class="form-group"><label>الحالة</label><select class="form-control" id="r-status"><option value="approved">قبول</option><option value="rejected">رفض</option><option value="revision">طلب تعديل</option></select></div>
+<div class="form-group"><label>الملاحظات / التعليق</label><textarea class="form-control" id="r-feedback" rows="3"></textarea></div>
+<div class="form-group"><label>الدرجة (اختياري)</label><input type="number" class="form-control" id="r-grade" placeholder="مثال: 85"></div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary btn-sm" onclick="closeModal('review-modal')">إلغاء</button><button class="btn btn-success btn-sm" onclick="saveReview()"><i class="fas fa-check"></i> حفظ المراجعة</button></div>
+</div></div>
+
+<!-- Footer -->
+<footer class="app-footer">
+<div class="footer-content">
+<div class="footer-section">
+<h4>منصة التسليم الأكاديمية</h4>
+<p>كلية العلاج الطبيعي - جامعة قنا</p>
+</div>
+<div class="footer-section">
+<h4>تواصل مع المطور</h4>
+<a href="https://wa.me/201113515751" target="_blank"><i class="fab fa-whatsapp"></i> واتساب: 01113515751</a>
+<a href="https://t.me/Dr_Abdallah_Sabry" target="_blank"><i class="fab fa-telegram"></i> تليجرام</a>
+</div>
+</div>
+<div class="footer-bottom"><p>برمجة وتطوير: عبدالله صبري &copy; 2026</p></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../js/app.js"></script>
+<script>
+let currentReviewId=null;
+
+function init(){
+if(!Auth.isLoggedIn()||(Auth.getUser().role!=='supervisor'&&Auth.getUser().role!=='admin')){window.location.href='../index.html';return;}
+const u=Auth.getUser();document.getElementById('user-name').textContent=u.name;
+document.getElementById('sett-name').value=u.name;document.getElementById('sett-nid').value=u.nationalId;document.getElementById('sett-email').value=u.email||'';
+updateStats();renderAssignments();renderSubmissions();populateSelects();
+setTimeout(()=>document.getElementById('loading').classList.add('hidden'),800);
+}
+
+function showSection(id,el){
+document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+document.getElementById('sec-'+id).classList.add('active');
+document.querySelectorAll('.sidebar-menu a').forEach(a=>a.classList.remove('active'));
+if(el)el.classList.add('active');
+const titles={dashboard:'لوحة المشرف',assignments:'التسليمات',submissions:'التسليمات الواردة',settings:'الإعدادات'};
+document.getElementById('page-title').textContent=titles[id];
+}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('active');}
+function openModal(id){document.getElementById(id).classList.add('active');}
+function closeModal(id){document.getElementById(id).classList.remove('active');}
+
+function populateSelects(){
+const opts=Courses.getAll().map(c=>'<option value="'+c.id+'">'+c.name+' ('+c.code+')</option>').join('');
+['assign-course-select','sub-course-filter'].forEach(id=>{const el=document.getElementById(id);if(!el)return;const first=el.options[0]?el.options[0].outerHTML:'';el.innerHTML=first+opts;});
+}
+
+function updateStats(){
+const myAssigns=DB.assignments.filter(a=>a.createdBy===currentUser.id&&a.status==='active');
+document.getElementById('stat-assignments').textContent=myAssigns.length;
+const mySubs=[];myAssigns.forEach(a=>DB.submissions.filter(s=>s.assignmentId===a.id).forEach(s=>mySubs.push(s)));
+document.getElementById('stat-pending').textContent=mySubs.filter(s=>s.status==='pending').length;
+document.getElementById('stat-approved').textContent=mySubs.filter(s=>s.status==='approved').length;
+document.getElementById('stat-rejected').textContent=mySubs.filter(s=>s.status==='rejected').length;
+}
+
+function renderAssignments(){
+const list=document.getElementById('assignments-list');const cid=document.getElementById('assign-course-select').value;
+if(!cid){list.innerHTML='<div class="alert alert-info"><i class="fas fa-info-circle"></i><span>اختر مقرراً</span></div>';return;}
+const as=Assignments.getByCourse(cid).filter(a=>a.createdBy===currentUser.id);
+if(!as.length){list.innerHTML='<div class="empty-state"><i class="fas fa-tasks"></i><h3>لا توجد تسليمات</h3></div>';return;}
+list.innerHTML=as.map(a=>{
+const subs=Submissions.getByAssignment(a.id).length;
+return '<div class="assignment-card"><div class="assignment-header"><div><div class="assignment-title">'+a.title+'</div><div class="assignment-meta"><span><i class="fas fa-calendar"></i> '+Utils.fmtDate(a.createdAt)+'</span><span><i class="fas fa-clock"></i> '+(a.dueDate?Utils.fmtDate(a.dueDate):'بدون موعد')+'</span><span><i class="fas fa-file-alt"></i> '+subs+' تسليم</span></div></div><span class="badge '+(a.type==='group'?'badge-info':'badge-primary')+'">'+(a.type==='group'?'مجموعة':'فردي')+'</span></div><p style="color:var(--text2);margin-bottom:15px">'+a.description+'</p><div class="assignment-actions"><button class="btn btn-primary btn-sm" onclick="viewSubmissions(''+a.id+'')"><i class="fas fa-eye"></i> عرض التسليمات</button><button class="btn btn-danger btn-sm" onclick="deleteAssignment(''+a.id+'')"><i class="fas fa-trash"></i> حذف</button></div></div>';
+}).join('');
+}
+
+function saveAssignment(){
+const cid=document.getElementById('assign-course-select').value;if(!cid){Utils.toast('اختر المقرر','warning');return;}
+const title=document.getElementById('a-title').value.trim();if(!title){Utils.toast('أدخل العنوان','warning');return;}
+const data={title,description:document.getElementById('a-desc').value.trim(),dueDate:document.getElementById('a-due').value,type:document.getElementById('a-type').value,groupId:document.getElementById('a-group').value||null};
+const res=Assignments.create(cid,data);if(res.success){Utils.toast(res.msg);closeModal('assignment-modal');renderAssignments();updateStats();document.getElementById('a-title').value='';document.getElementById('a-desc').value='';document.getElementById('a-due').value='';}
+else Utils.toast(res.msg,'error');
+}
+
+function toggleGroupSelect(){
+document.getElementById('a-group-wrap').style.display=document.getElementById('a-type').value==='group'?'block':'none';
+const cid=document.getElementById('assign-course-select').value;if(!cid)return;
+const gs=Groups.getByCourse(cid);document.getElementById('a-group').innerHTML=gs.map(g=>'<option value="'+g.id+'">'+g.name+'</option>').join('');
+}
+
+function deleteAssignment(id){
+Utils.confirm('حذف التسليم وجميع ملفاته؟',ok=>{if(!ok)return;const res=Assignments.del(id);if(res.success){Utils.toast(res.msg);renderAssignments();updateStats();}else Utils.toast(res.msg,'error');});
+}
+
+function renderSubmissions(){
+const list=document.getElementById('submissions-list');const cid=document.getElementById('sub-course-filter').value;const status=document.getElementById('sub-status-filter').value;
+let subs=[];
+if(cid){subs=DB.submissions.filter(s=>{const a=Assignments.getById(s.assignmentId);return a&&a.courseId===cid&&a.createdBy===currentUser.id;});}
+else{const myAssignIds=DB.assignments.filter(a=>a.createdBy===currentUser.id).map(a=>a.id);subs=DB.submissions.filter(s=>myAssignIds.includes(s.assignmentId));}
+if(status)subs=subs.filter(s=>s.status===status);
+if(!subs.length){list.innerHTML='<div class="empty-state"><i class="fas fa-inbox"></i><h3>لا توجد تسليمات</h3></div>';return;}
+list.innerHTML=subs.map(s=>{
+const st=DB.users.find(u=>u.id===s.studentId);const a=Assignments.getById(s.assignmentId);
+const badges={pending:'badge-warning',approved:'badge-success',rejected:'badge-danger',revision:'badge-info'};
+const labels={pending:'معلق',approved:'مقبول',rejected:'مرفوض',revision:'يحتاج تعديل'};
+return '<div class="submission-item"><div class="submission-header"><div class="submission-student"><div class="student-avatar-small">'+(st?st.name.charAt(0):'?')+'</div><div><div><strong>'+(st?st.name:'غير معروف')+'</strong></div><div style="font-size:0.8rem;color:var(--text2)">'+(a?a.title:'غير معروف')+'</div></div></div><span class="badge '+badges[s.status]+'">'+labels[s.status]+'</span></div><div class="submission-file"><i class="fas fa-file-pdf"></i><div style="flex:1"><div>'+s.fileName+'</div><div style="font-size:0.8rem;color:var(--text2)">'+Utils.fmtSize(s.fileSize)+' | '+Utils.fmtDate(s.submittedAt)+'</div></div><button class="btn btn-primary btn-sm" onclick="downloadSubmission(''+s.id+'')"><i class="fas fa-download"></i> تحميل</button><button class="btn btn-success btn-sm" onclick="openReview(''+s.id+'')"><i class="fas fa-check-circle"></i> مراجعة</button></div></div>';
+}).join('');
+}
+
+function openReview(sid){
+currentReviewId=sid;const s=DB.submissions.find(x=>x.id===sid);if(!s)return;
+const st=DB.users.find(u=>u.id===s.studentId);const a=Assignments.getById(s.assignmentId);
+document.getElementById('review-details').innerHTML='<div style="background:#f8f9fa;padding:15px;border-radius:8px;margin-bottom:15px"><div style="margin-bottom:8px"><strong>الطالب:</strong> '+(st?st.name:'غير معروف')+'</div><div style="margin-bottom:8px"><strong>التسليم:</strong> '+(a?a.title:'غير معروف')+'</div><div><strong>الملف:</strong> '+s.fileName+' ('+Utils.fmtSize(s.fileSize)+')</div></div>';
+document.getElementById('r-status').value=s.status||'pending';document.getElementById('r-feedback').value=s.feedback||'';document.getElementById('r-grade').value=s.grade||'';
+openModal('review-modal');
+}
+
+function saveReview(){
+if(!currentReviewId)return;
+const status=document.getElementById('r-status').value;const feedback=document.getElementById('r-feedback').value;const grade=document.getElementById('r-grade').value;
+const res=Submissions.review(currentReviewId,status,feedback,grade);if(res.success){Utils.toast(res.msg);closeModal('review-modal');renderSubmissions();updateStats();}else Utils.toast(res.msg,'error');
+}
+
+function downloadSubmission(id){
+const s=DB.submissions.find(x=>x.id===id);if(!s||!s.fileData){Utils.toast('لا يوجد ملف','warning');return;}
+const a=document.createElement('a');a.href=s.fileData;a.download=s.fileName;document.body.appendChild(a);a.click();a.remove();
+}
+
+function viewSubmissions(aid){
+document.getElementById('sub-course-filter').value='';document.getElementById('sub-status-filter').value='';renderSubmissions();
+document.querySelectorAll('.sidebar-menu a')[2].click();
+}
+
+function saveSettings(){
+const email=document.getElementById('sett-email').value.trim();const oldP=document.getElementById('sett-old-pwd').value;const newP=document.getElementById('sett-new-pwd').value;const confP=document.getElementById('sett-confirm-pwd').value;
+if(newP&&newP!==confP){Utils.toast('كلمتا المرور غير متطابقتين','warning');return;}
+if(newP){const res=Auth.chgPwd(oldP,newP);if(!res.success){Utils.toast(res.msg,'error');return;}Utils.toast(res.msg);}
+const u=DB.users.find(x=>x.id===currentUser.id);if(u){u.email=email;DB.save();}
+Utils.toast('تم حفظ الإعدادات');
+}
+
+window.addEventListener('load',init);
+</script>
+</body>
+</html>
